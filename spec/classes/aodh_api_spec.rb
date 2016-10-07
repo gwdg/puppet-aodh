@@ -199,7 +199,6 @@ describe 'aodh::api' do
       let (:facts) do
         facts.merge!(OSDefaults.get_facts({
           :fqdn           => 'some.host.tld',
-          :processorcount => 2,
           :concat_basedir => '/var/lib/puppet/concat'
         }))
       end
