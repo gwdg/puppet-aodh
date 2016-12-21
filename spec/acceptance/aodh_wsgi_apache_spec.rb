@@ -27,8 +27,6 @@ describe 'basic aodh' do
         require              => Class['rabbitmq'],
       }
 
-      Rabbitmq_user_permissions['aodh@/'] -> Service<| tag == 'aodh-service' |>
-
       class { '::aodh':
         rabbit_userid       => 'aodh',
         rabbit_password     => 'an_even_bigger_secret',
