@@ -179,15 +179,17 @@
 #   reduce performance. Only valid for PKI tokens. Integer value
 #   Defaults to $::os_service_default.
 #
-# [*signing_dir*]
-#   (Optional) Directory used to cache files related to PKI tokens.
-#   Defaults to $::os_service_default.
-#
 # [*token_cache_time*]
 #   (Optional) In order to prevent excessive effort spent validating tokens,
 #   the middleware caches previously-seen tokens for a configurable duration
 #   (in seconds). Set to -1 to disable caching completely. Integer value
 #   Defaults to $::os_service_default.
+#
+# DEPRECATED PARAMETERS
+#
+# [*signing_dir*]
+#   (Optional) Directory used to cache files related to PKI tokens.
+#   Defaults to undef
 #
 class aodh::keystone::authtoken(
   $username                       = 'aodh',
@@ -224,8 +226,9 @@ class aodh::keystone::authtoken(
   $manage_memcache_package        = false,
   $region_name                    = $::os_service_default,
   $revocation_cache_time          = $::os_service_default,
-  $signing_dir                    = $::os_service_default,
   $token_cache_time               = $::os_service_default,
+  # DEPRECATED PARAMETERS
+  $signing_dir                    = undef,
 ) {
 
   if is_service_default($password) and ! $::aodh::api::keystone_password {
@@ -245,6 +248,10 @@ $user_domain_name)
   $project_domain_name_real = pick($::aodh::api::keystone_project_domain_name, $project_domain_name)
   $auth_type_real = pick($::aodh::api::keystone_auth_type, $auth_type)
 
+
+  if $signing_dir {
+    warning('signing_dir parameter is deprecated, has no effect and will be removed in the P release.')
+  }
 
   keystone::resource::authtoken { 'aodh_config':
     username                       => $username_real,
@@ -281,7 +288,6 @@ $user_domain_name)
     manage_memcache_package        => $manage_memcache_package,
     region_name                    => $region_name,
     revocation_cache_time          => $revocation_cache_time,
-    signing_dir                    => $signing_dir,
     token_cache_time               => $token_cache_time,
   }
 }
