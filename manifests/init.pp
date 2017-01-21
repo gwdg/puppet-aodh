@@ -19,6 +19,16 @@
 #      transport://user:pass@host1:port[,hostN:portN]/virtual_host
 #    Defaults to $::os_service_default
 #
+# [*rpc_response_timeout*]
+#  (Optional) Seconds to wait for a response from a call.
+#  Defaults to $::os_service_default
+#
+# [*control_exchange*]
+#   (Optional) The default exchange under which topics are scoped. May be
+#   overridden by an exchange name specified in the transport_url
+#   option.
+#   Defaults to $::os_service_default
+#
 # [*rpc_backend*]
 #   (optional) The rpc backend implementation to use, can be:
 #     amqp (for AMQP 1.0 protocol)
@@ -258,6 +268,8 @@ class aodh (
   $ensure_package                     = 'present',
   $alarm_history_time_to_live         = $::os_service_default,
   $default_transport_url              = $::os_service_default,
+  $rpc_response_timeout               = $::os_service_default,
+  $control_exchange                   = $::os_service_default,
   $rpc_backend                        = 'rabbit',
   $rabbit_host                        = $::os_service_default,
   $rabbit_hosts                       = $::os_service_default,
@@ -375,7 +387,9 @@ class aodh (
   }
 
   oslo::messaging::default { 'aodh_config':
-    transport_url => $default_transport_url,
+    transport_url        => $default_transport_url,
+    rpc_response_timeout => $rpc_response_timeout,
+    control_exchange     => $control_exchange,
   }
 
   oslo::messaging::notifications { 'aodh_config':
